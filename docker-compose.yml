@@ -1,0 +1,48 @@
+version: '3' # vs mais atual
+networks:
+  network:
+    driver: bridge
+services:             
+
+  app:
+    build: api
+    container_name: api
+    restart: always
+    tty: true
+    networks:
+      - network
+    ports:
+      - "3333:3333"
+    volumes:       
+      - ./api:/src/app
+    working_dir: /src/app
+    environment:
+      - PORT=3333
+      - CONNECTION_DRIVE=mysql
+      # CONFIGURAÇÕES MIGRATIONS
+      - TYPE_ORM_LOGGING=true     
+      - TYPE_ORM_MIGRATIONS=./src/database/migrations/**.ts
+      - TYPE_ORM_MIGRATIONS_DIR=./src/database/migrations
+      # PARA OS DRIVE ENTRE mysql
+      - TYPE_ORM_ENTITIES=./src/models/*.ts
+      - TYPE_ORM_ENTITIES_DIR=./src/models/**.ts
+    depends_on: 
+      - db_mysql
+  
+  # CONFIGURAÇÕES MYSQL
+  db_mysql:
+    container_name: db_mysql
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    tty: true
+    ports:
+      - "3336:3306"
+    volumes:
+      - ./dbs/mysql/dbdata:/var/lib/mysql
+      - ./dbs/init/test_mysql.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment:
+      - MYSQL_DATABASE=database
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - network
