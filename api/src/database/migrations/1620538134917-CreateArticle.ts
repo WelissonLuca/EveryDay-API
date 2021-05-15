@@ -8,8 +8,10 @@ export class CreateArticle1620538134917 implements MigrationInterface {
         columns: [
           {
             name: 'id',
-            type: 'uuid',
             isPrimary: true,
+            type: "varchar",    
+            generationStrategy: 'uuid',
+            default: `(UUID_TO_BIN(UUID(), TRUE))`
           },
           {
             name: 'title',
@@ -22,17 +24,17 @@ export class CreateArticle1620538134917 implements MigrationInterface {
           {
             name: 'created_at',
             type: 'timestamp',
-            default: 'nome()',
+            default: 'now()',
           },
           {
             name: 'update_at',
             type: 'timestamp',
-            default: 'nome()',
+            default: 'now()',
           },
           {
             name: 'deleted_at',
             type: 'timestamp',
-            default: 'nome()',
+            default: 'now()',
           },
         ],
       })
